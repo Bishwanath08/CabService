@@ -1,6 +1,8 @@
 package org.service.cabService.controller;
 
 import jakarta.validation.Valid;
+import org.service.cabService.enums.UserType;
+import org.service.cabService.jwt.JwtUtil;
 import org.service.cabService.model.User;
 import org.service.cabService.repository.UserRepository;
 import org.service.cabService.service.UserService;
@@ -10,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -25,6 +29,9 @@ public class UserController {
 
     @Autowired
     private VehicleService vehicleService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
 
 
@@ -68,10 +75,28 @@ public class UserController {
         }
     }
     @PostMapping("/verify-login/driver")
-    public ResponseEntity<?> verifyDriverOtp(@RequestParam String mobile, @RequestParam String otp ){
+    public ResponseEntity<?> verifyDriverOtp(@RequestParam String mobile, @RequestParam String otp) {
         try {
             String message = userService.verifyLoginOtp(mobile, otp);
-            return ResponseEntity.ok(message);
+
+            User user = userRepository.findByMobile(mobile);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found after verification.");
+            }
+
+            if (user.getUserType() != UserType.DRIVER) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Not a driver.");
+            }
+
+
+            String token = jwtUtil.generateToken(user.getMobile(), user.getUserType().name());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", message);
+            response.put("mobile", user.getMobile());
+            response.put("token", token);
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -124,7 +149,25 @@ public class UserController {
     public ResponseEntity<?> verifyCustomerOtp(@RequestParam String mobile, @RequestParam String otp ){
         try {
             String message = userService.verifyLoginCustomerOtp(mobile, otp);
-            return ResponseEntity.ok(message);
+
+            User user = userRepository.findByMobile(mobile);
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found after verification.");
+            }
+
+            if (user.getUserType() != UserType.CUSTOMER) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: Not a Customer.");
+            }
+
+
+            String token = jwtUtil.generateToken(user.getMobile(), user.getUserType().name());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", message);
+            response.put("mobile", user.getMobile());
+            response.put("token", token);
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

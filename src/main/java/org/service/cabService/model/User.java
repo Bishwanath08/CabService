@@ -20,11 +20,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(unique = true, nullable = false)
     @Pattern(regexp = "^[6-9][0-9]{9}$", message = "Please provide valid mobile number.")
     private String mobile;
-
 
     @Column(name = "otp")
     private String otp;
@@ -39,7 +37,6 @@ public class User {
     private boolean isVerified;
 
     private LocalDateTime otpGeneratedAt;
-
 
 }
 

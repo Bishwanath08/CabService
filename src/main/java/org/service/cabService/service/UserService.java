@@ -1,6 +1,7 @@
 package org.service.cabService.service;
 
 import org.service.cabService.enums.UserType;
+import org.service.cabService.jwt.JwtUtil;
 import org.service.cabService.model.User;
 import org.service.cabService.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,25 +19,27 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
 
-public User registerDriver(User user) throws Exception {
-    User existingUser = userRepository.findByMobile(user.getMobile());
 
-    if (existingUser != null) {
-        if (existingUser.isVerified()) {
-            throw new Exception("Mobile number already registered");
+    public User registerDriver(User user) throws Exception {
+        User existingUser = userRepository.findByMobile(user.getMobile());
+
+        if (existingUser != null) {
+            if (existingUser.isVerified()) {
+                throw new Exception("Mobile number already registered");
+            }
+
+            generateOTP(4, existingUser);
+            return userRepository.save(existingUser);
         }
 
-        generateOTP(4, existingUser);
-        return userRepository.save(existingUser);
+        user.setUserType(UserType.DRIVER);
+        generateOTP(4, user);
+        user.setVerified(false);
+        return userRepository.save(user);
     }
-
-    user.setUserType(UserType.DRIVER);
-    generateOTP(4, user);
-    user.setVerified(false);
-    return userRepository.save(user);
-}
-
 
 
     public User loginDriver(User user) throws Exception{
@@ -55,6 +58,7 @@ public User registerDriver(User user) throws Exception {
     }
 
     public String verifyLoginOtp(String mobile, String otp) throws Exception{
+
         User user = userRepository.findByMobile(mobile);
 
         if (user == null || user.getUserType() != UserType.DRIVER) {
@@ -67,15 +71,15 @@ public User registerDriver(User user) throws Exception {
             throw new Exception("OTP expired.Please request a new one.");
         }
 
-        String token = UUID.randomUUID().toString();
+        String token = jwtUtil.generateToken(user.getMobile(), user.getUserType().name());
+
         user.setToken(token);
         user.setOtp(null);
         user.setVerified(true);
         user.setOtpGeneratedAt(null);
         userRepository.save(user);
 
-        return "Login successful:- " + mobile+
-                "\n Your token: " + token ;
+        return "Login successful:-";
     }
 
     public User registerCustomer(User user) throws Exception {
@@ -125,15 +129,14 @@ public User registerDriver(User user) throws Exception {
             throw new Exception("OTP expired.Please request a new one.");
         }
 
-        String token = UUID.randomUUID().toString();
+        String token = jwtUtil.generateToken(user.getMobile(), user.getUserType().name());
         user.setToken(token);
         user.setOtp(null);
         user.setVerified(true);
         user.setOtpGeneratedAt(null);
         userRepository.save(user);
 
-        return "Login successful:- " + mobile+
-                "\n Your token: " + token;
+        return "Login successful:- ";
     }
 
 
