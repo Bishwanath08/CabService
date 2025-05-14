@@ -79,7 +79,7 @@ public class UserService {
         user.setOtpGeneratedAt(null);
         userRepository.save(user);
 
-        return "Login successful:-";
+        return "Login successful!";
     }
 
     public User registerCustomer(User user) throws Exception {

@@ -39,7 +39,6 @@ public class VehicleService {
         vehicle.setStatus(status);
         vehicle.setCurrentVehicle(false);
 
-
         return vehicleRepository.save(vehicle);
     }
 
@@ -77,7 +76,9 @@ public class VehicleService {
     }
 
     public List<Map<String, Object>>  getAvailableDriversAndVehicles(String token) throws  Exception{
+
         User user = userRepository.findByToken(token);
+
         if (user.getUserType() != UserType.CUSTOMER) {
             throw  new Exception("Access denied. Only customer can view drivers.");
         }

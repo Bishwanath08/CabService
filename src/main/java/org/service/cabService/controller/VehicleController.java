@@ -24,10 +24,10 @@ public class VehicleController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> addVehicle(@RequestParam Long driverId,
-                                        @RequestParam String vehicleType,
-                                        @RequestParam String vehicleNumber,
-                                        @RequestParam VehicleStatus status) {
+    public ResponseEntity<?> addVehicle(@RequestBody Long driverId,
+                                        @RequestBody String vehicleType,
+                                        @RequestBody String vehicleNumber,
+                                        @RequestBody VehicleStatus status) {
 
         if (!isKycComplete(driverId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Complete KYC before adding vehicle.");
@@ -47,10 +47,10 @@ public class VehicleController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateVehicle(@PathVariable Long id,
-                                           @RequestParam Long driverId,
-                                           @RequestParam String vehicleType,
-                                           @RequestParam String  vehicleNumber,
-                                           @RequestParam VehicleStatus status) {
+                                           @RequestBody Long driverId,
+                                           @RequestBody String vehicleType,
+                                           @RequestBody String  vehicleNumber,
+                                           @RequestBody VehicleStatus status) {
 
 
         if (!isKycComplete(driverId)) {
@@ -73,10 +73,10 @@ public class VehicleController {
 
     @PutMapping("/status/{id}")
     public  ResponseEntity<?> changeStatus(@PathVariable Long id,
-                                           @RequestParam VehicleStatus status,
-                                           @RequestParam Long driverId) {
+                                           @RequestBody VehicleStatus status,
+                                           @RequestBody Long driverId) {
         if (!isKycComplete(driverId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("KYC required to update vehicle.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("KYC required to update vehicle status.");
         }
         try {
             vehicleService.changeVehicleStatus(id, status);
@@ -87,8 +87,8 @@ public class VehicleController {
     }
 
     @PutMapping("/set-current")
-    public ResponseEntity<?> setCurrentVehicle(@RequestParam Long driverId,
-                                               @RequestParam Long vehicleId) {
+    public ResponseEntity<?> setCurrentVehicle(@RequestBody Long driverId,
+                                               @RequestBody Long vehicleId) {
 
         try {
             vehicleService.assignCurrentVehicle(driverId, vehicleId);

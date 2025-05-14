@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtp(@RequestParam String mobile, @RequestParam String otp) {
+    public ResponseEntity<?> verifyOtp(@RequestBody String mobile, @RequestBody String otp) {
         try {
             User verifiedUser = userService.verifyOtp(mobile, otp);
             return ResponseEntity.ok(Map.of("message" , "Driver Registered successfully:" ,
@@ -75,7 +75,7 @@ public class UserController {
         }
     }
     @PostMapping("/verify-login/driver")
-    public ResponseEntity<?> verifyDriverOtp(@RequestParam String mobile, @RequestParam String otp) {
+    public ResponseEntity<?> verifyDriverOtp(@RequestBody String mobile, @RequestBody String otp) {
         try {
             String message = userService.verifyLoginOtp(mobile, otp);
 
@@ -104,7 +104,6 @@ public class UserController {
 
 
 
-
     @PostMapping("/register/customer")
     public ResponseEntity<?> registerCustomer(@Valid @RequestBody User user, BindingResult result) {
         if (result.hasErrors()){
@@ -119,7 +118,7 @@ public class UserController {
     }
 
     @PostMapping("/verify-otp/customer")
-    public ResponseEntity<?> verifyOtpCustomer(@RequestParam String mobile, @RequestParam String otp) {
+    public ResponseEntity<?> verifyOtpCustomer(@RequestBody String mobile, @RequestBody String otp) {
         try {
             User verifiedUser = userService.verifyOtp(mobile, otp);
             return ResponseEntity.ok(Map.of("message" , "Customer Registered successfully:" ,
@@ -146,7 +145,7 @@ public class UserController {
     }
 
     @PostMapping("/verify-login/customer")
-    public ResponseEntity<?> verifyCustomerOtp(@RequestParam String mobile, @RequestParam String otp ){
+    public ResponseEntity<?> verifyCustomerOtp(@RequestBody String mobile, @RequestBody String otp ){
         try {
             String message = userService.verifyLoginCustomerOtp(mobile, otp);
 
