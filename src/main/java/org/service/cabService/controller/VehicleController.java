@@ -52,7 +52,6 @@ public class VehicleController {
                                            @RequestBody String  vehicleNumber,
                                            @RequestBody VehicleStatus status) {
 
-
         if (!isKycComplete(driverId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("KYC required to update vehicle.");
         }
