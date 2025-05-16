@@ -28,10 +28,10 @@ public class KycController {
     @PostMapping("/kyc/submit")
     public ResponseEntity<?> submitKyc(@Valid
             @RequestBody Long userId,
-            @RequestBody @Pattern(regexp = "^[2-9]{1}[0-9]{3}\\\\s[0-9]{4}\\\\s[0-9]{4}$", message = "Please provide a valid 12-digit Aadhar number.") String adharNumber,
+            @RequestBody @Pattern(regexp = "^[2-9]{1}[0-9]{3}\\\\s[0-9]{4}\\\\s[0-9]{4}$", message = "Please provide a valid 12-digit Aadhaar number.") String adharNumber,
             @RequestBody String adharName,
             @RequestBody MultipartFile adharImage,
-            @RequestBody @Pattern(regexp = "^[A-Z]{5}[0-9]{4}[A-Z]{1}$", message = "Please provide a valid PAN number.") String panNumber,
+            @RequestBody @Pattern(regexp = "^[A-Z]{5}[0-9]{4} A-Z]{1}$", message = "Please provide a valid PAN number.") String panNumber,
             @RequestBody String panName,
             @RequestBody String dob,
             @RequestBody MultipartFile panImage
